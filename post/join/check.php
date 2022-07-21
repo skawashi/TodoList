@@ -1,3 +1,13 @@
+<?php
+session_start();
+require('../dbconnect.php');
+
+if(empty($_SESSION['join'])) {
+    header('Location: ./index.php');
+}
+
+?>
+
 <!doctype html>
 <html lang="ja">
 
@@ -31,9 +41,9 @@
             </div>
             <dl>
                 <dt>ユーザーネーム</dt>
-                <dd></dd>
+                <dd><?php echo htmlspecialchars($_SESSION['join']['name'], ENT_QUOTES); ?></dd>
                 <dt>メールアドレス</dt>
-                <dd></dd>
+                <dd><?php echo htmlspecialchars($_SESSION['join']['mail'], ENT_QUOTES)?></dd>
                 <dt>パスワード</dt>
                 <dd>【表示されません】</dd>
             </dl>
