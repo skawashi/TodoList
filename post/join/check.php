@@ -2,10 +2,27 @@
 session_start();
 require('../dbconnect.php');
 
-if(empty($_SESSION['join'])) {
+if(!isset($_SESSION['join'])) {
     header('Location: ./index.php');
+    exit();
 }
 
+if(!empty($_POST)) {
+    $statement = $db->prepare('INSERT INTO members SET name = ?, email = ?, password = ?, created = NOW()');
+    $statement->execute(array(
+        $_SESSION['join']['name'],
+        $_SESSION['join']['mail'],
+        password_hash($_SESSION['join']['password'], PASSWORD_DEFAULT)
+    ));
+    unset($_SESSION['join']);
+
+    header('Location: ./thanks.php');
+    exit();
+}
+
+// if(!empty($_POST)) {
+//     $statement = $db->prepare('INSERT INTO members SET name=?, email=?, password=?, created=NOW()');
+// }
 ?>
 
 <!doctype html>
@@ -27,15 +44,16 @@ if(empty($_SESSION['join'])) {
             <p>TodoList</p>
             <nav>
                 <ul class="main-nav">
-                    <li>ログイン</li>
-                    <li>会員登録</li>
+                    <li><a href="../index.php">ログイン</a></li>
+                    <li><a href="./index.php">会員登録</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
     <main>
-    <form action="" method="POST">
+        <form action="" method="POST">
+            <input type="hidden" name="action" value="submit">
             <div>
                 <p>以下の内容で登録します</p>
             </div>
@@ -43,12 +61,12 @@ if(empty($_SESSION['join'])) {
                 <dt>ユーザーネーム</dt>
                 <dd><?php echo htmlspecialchars($_SESSION['join']['name'], ENT_QUOTES); ?></dd>
                 <dt>メールアドレス</dt>
-                <dd><?php echo htmlspecialchars($_SESSION['join']['mail'], ENT_QUOTES)?></dd>
+                <dd><?php echo htmlspecialchars($_SESSION['join']['mail'], ENT_QUOTES); ?></dd>
                 <dt>パスワード</dt>
                 <dd>【表示されません】</dd>
             </dl>
             <div>
-                <input type="submit" value="登録する">
+                <a href="./index.php?action=rewrite">&laquo;&nbsp;書き直す</a> | <input type="submit" value="登録する">
             </div>
         </form>
     </main>
