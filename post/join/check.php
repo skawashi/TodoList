@@ -35,7 +35,7 @@ if(!empty($_POST)) {
 <title>Title</title>
 
 <!-- Bootstrap CSS -->
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../css/join_style.css">
 </head>
 
 <body>
