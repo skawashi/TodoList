@@ -71,14 +71,14 @@ if($_GET['action'] == 'rewrite') {
             <p>TodoList</p>
             <nav>
                 <ul class="main-nav">
-                    <li><a href="../index.php">ログイン</a></li>
+                    <li><a href="../login.php">ログイン</a></li>
                     <li><a href="./index.php">会員登録</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main class="login-form">
+    <main class="signup-form">
         <form action="" method="POST" class="form">
             <div class="title">
                 <h2>会員登録</h2>

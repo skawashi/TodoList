@@ -44,7 +44,7 @@ if(!empty($_POST)) {
             <p>TodoList</p>
             <nav>
                 <ul class="main-nav">
-                    <li><a href="../index.php">ログイン</a></li>
+                    <li><a href="../login.php">ログイン</a></li>
                     <li><a href="./index.php">会員登録</a></li>
                 </ul>
             </nav>

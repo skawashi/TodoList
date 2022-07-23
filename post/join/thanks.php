@@ -18,7 +18,7 @@
             <p>TodoList</p>
             <nav>
                 <ul class="main-nav">
-                    <li><a href="../index.php">ログイン</a></li>
+                    <li><a href="../login.php">ログイン</a></li>
                     <li><a href="./index.php">会員登録</a></li>
                 </ul>
             </nav>
@@ -28,7 +28,7 @@
     <main>
         <div>
             <p>登録ありがとうございます</p>
-            <p><a href="../index.php">&laquo;&nbsp;ログイン</a></p>
+            <p><a href="../login.php">&laquo;&nbsp;ログイン</a></p>
         </div>
     </main>
 
