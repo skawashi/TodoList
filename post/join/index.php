@@ -4,27 +4,34 @@ require('../dbconnect.php');
 
 // フォームのエラーチェック
 if(!empty($_POST)) {
+    // 名前が未入力
     if($_POST['name'] == '') {
         $error['name'] = 'blank';
     }
 
+    // メールアドレスが未入力の場合
     if($_POST['mail'] == '') {
         $error['mail'] = 'blank';
     }
 
+    // パスワードが未入力の場合
     if($_POST['password'] == '') {
         $error['password'] = 'blank';
+    // パスワードが4文字以下の場合
     } elseif(strlen($_POST['password']) < 4) {
         $error['password'] = 'length';
     }
 
+    // メールアドレスの重複チェック
     $member = $db->prepare('SELECT COUNT(*) AS cnt FROM members WHERE email = ?');
     $member->execute(array($_POST['mail']));
     $record = $member->fetch();
+    // アドレスが重複している場合
     if($record['cnt'] > 0) {
         $error['mail'] = 'duplicate';
     }
 
+    // 上記のエラーがなかった場合
     if(empty($error)) {
         $_SESSION['join'] = $_POST;
         header('Location: ./check.php');
@@ -32,6 +39,7 @@ if(!empty($_POST)) {
     }
 }
 
+// check.phpで戻るをクリックして戻ってきた場合の処理
 if($_GET['action'] == 'rewrite') {
     $_POST = $_SESSION['join'];
     // 現在は必要ないが、画像を登録してもらう際はもう一度指定してもらう必要があるのでそのフラグ用
