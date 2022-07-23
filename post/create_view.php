@@ -1,6 +1,36 @@
 <?php
 session_start();
 require('./dbconnect.php');
+
+// ログイン認証されている場合
+if(isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
+    $_SESSION['time'] = time();
+
+    $members = $db->prepare('SELECT * FROM members Where id = ?');
+    $members->execute(array($_SESSION['id']));
+    $member = $members->fetch();
+
+// ログイン認証されていない場合
+} else {
+    header('Location: ./login.php');
+    exit();
+}
+
+if(!empty($_POST)) {
+    if($_POST['title'] != '') {
+        $todo = $db->prepare('INSERT INTO todo-list SET title = ?, contents = contents, member_id = ?, created = NOW()');
+        $todo->execute(array(
+            $_POST['title'],
+            $_POST['contents'],
+            $_SESSION['id']
+        ));
+
+        header('Location: ./index.php');
+    }
+
+
+}
+
 ?>
 
 <!doctype html>
@@ -39,7 +69,7 @@ require('./dbconnect.php');
                         <input type="text" name="title" placeholder="Todo">
                     </dt>
                     <dt>
-                        <input type="text" name="content" placeholder="内容">
+                        <input type="text" name="contents" placeholder="内容">
                     </dt>
                 </dl>
                 <input type="submit">
@@ -47,8 +77,12 @@ require('./dbconnect.php');
         </div>
         <div class="todo-table">
             <div class="title">
-                <p>一覧表示</p>
+                <p><?php echo $member['name'] . 'さんのTodoリスト'?></p>
             </div>
+            <ul>
+                <li>task1</li>
+                <li>task2</li>
+            </ul>
 
         </div>
     </main>
