@@ -5,17 +5,14 @@ require('./dbconnect.php');
 // 入力内容のチェック
 if(!empty($_POST)) {
     // 入力漏れがない場合
-    if($_POST['mail'] != '' && $_POST['password'] != ''){
-        $login = $db->prepare('SELECT * FROM members WHERE email = ? AND password = ?');
-        $login->execute(array(
-        $_POST['mail'],
-        password_hash($_POST['password'], PASSWORD_DEFAULT)
-        ));
+    if($_POST['mail'] != '' && $_POST['password'] != '') {
+        $login = $db->prepare('SELECT * FROM members WHERE email = ?');
+        $login->execute(array($_POST['mail']));
         $member = $login->fetch();
 
         // DBに該当するデータがある場合
-        if($member){
-            $_SESSION['userid'] = $member['id'];
+        if(password_verify($_POST['password'], $member['password'])) {
+            $_SESSION['user_id'] = $member['id'];
             $_SESSION['time'] = time();
             header('Location: ./create_view.php');
             exit();
@@ -51,29 +48,40 @@ if(!empty($_POST)) {
             <p>TodoList</p>
             <nav>
                 <ul class="main-nav">
-                    <li><a href="">ログアウト</a></li>
+                    <li><a href="./join/index.php">会員登録</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
     <main class="login-form">
-        <form action="">
+
+        <div>
+            <h2>ログイン</h2>
+        </div>
+        <?php if($error['login'] == 'blank'): ?>
             <div>
-                <h2>ログイン</h2>
+                <p>メールアドレスとパスワードをご記入ください</p>
             </div>
+        <?php endif; ?>
+        <?php if($error['login'] == 'failed'): ?>
+            <div>
+                <p>ログインに失敗しました。正しく入力してください。</p>
+            </div>
+        <?php endif; ?>
+        <form action="" method="post">
             <dl>
                 <dt>
                     <p>メールアドレス</p>
                 </dt>
                 <dd>
-                    <input type="text" name="mail" size="35" maxlength="255">
+                    <input type="text" name="mail" size="35" maxlength="255" <?php echo htmlspecialchars($_POST['mail'], ENT_QUOTES); ?>>
                 </dd>
                 <dt>
                     <p>パスワード</p>
                 </dt>
                 <dd>
-                    <input type="password" name="password" size="35" maxlength="100">
+                    <input type="password" name="password" size="35" maxlength="100" <?php echo htmlspecialchars($_POST['password'], ENT_QUOTES); ?>>
                 </dd>
                 <dt>
                     <p>ログイン情報の記録</p>
