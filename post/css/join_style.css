@@ -52,7 +52,7 @@ main {
     margin: 0;
 }
 
-.login-form {
+.signup-form {
     display: flex;
     justify-content: center;
     align-items: center;
