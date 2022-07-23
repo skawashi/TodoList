@@ -2,6 +2,11 @@
 session_start();
 require('./dbconnect.php');
 
+if(isset($_SESSION['user_id'])) {
+    header('Location: ./create_view.php');
+    exit();
+}
+
 // 入力内容のチェック
 if(!empty($_POST)) {
     // 入力漏れがない場合
@@ -12,8 +17,13 @@ if(!empty($_POST)) {
 
         // DBに該当するデータがある場合
         if(password_verify($_POST['password'], $member['password'])) {
-            $_SESSION['user_id'] = $member['id'];
             $_SESSION['time'] = time();
+
+            // ログイン情報を保存する場合
+            if($_POST['save'] == 'on') {
+                $_SESSION['user_id'] = $member['id'];
+            }
+
             header('Location: ./create_view.php');
             exit();
 
