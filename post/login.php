@@ -2,11 +2,14 @@
 session_start();
 require('./dbconnect.php');
 
-if(isset($_SESSION['user_id'])) {
-    header('Location: ./create_view.php');
+// ログイン状態を保存していたら自動ログイン
+if($_SESSION['login'] == 'save') {
+    $_SESSION['time'] = time();
+    header('Location: ./index.php');
     exit();
 }
 
+// ToDo 徳丸本(p482)を参考に認証処理を行う
 // 入力内容のチェック
 if(!empty($_POST)) {
     // 入力漏れがない場合
@@ -15,16 +18,19 @@ if(!empty($_POST)) {
         $login->execute(array($_POST['mail']));
         $member = $login->fetch();
 
-        // DBに該当するデータがある場合
+        // DBから取り出したパスワードと入力されたパスワードの照合
         if(password_verify($_POST['password'], $member['password'])) {
+            // セッションIDの再生成
+            session_regenerate_id(true);
+            $_SESSION['id'] = $member['id'];
             $_SESSION['time'] = time();
 
             // ログイン情報を保存する場合
             if($_POST['save'] == 'on') {
-                $_SESSION['user_id'] = $member['id'];
+                $_SESSION['login'] = 'save';
             }
 
-            header('Location: ./create_view.php');
+            header('Location: ./index.php');
             exit();
 
         // 該当データがない場合
@@ -46,7 +52,7 @@ if(!empty($_POST)) {
 <!-- Required meta tags -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Title</title>
+<title>ログイン</title>
 
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" href="./css/post_style.css">
