@@ -2,35 +2,40 @@
 session_start();
 require('./dbconnect.php');
 
-// ログイン認証されている場合
+// idセットされ、タイムアウトしていないかチェック
 if(isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
+    // 両方満たしている場合
     $_SESSION['time'] = time();
 
+    // 会員情報の取得
     $members = $db->prepare('SELECT * FROM members Where id = ?');
     $members->execute(array($_SESSION['id']));
     $member = $members->fetch();
 
-// ログイン認証されていない場合
+
 } else {
+    // 満たしていない場合
     header('Location: ./login.php');
     exit();
 }
 
+// Todoを記録
 if(!empty($_POST)) {
     if($_POST['title'] != '') {
-        $todo = $db->prepare('INSERT INTO todo-list SET title = ?, contents = contents, member_id = ?, created = NOW()');
-        $todo->execute(array(
+        $post = $db->prepare('INSERT INTO todo_list SET title = ?, contents = ?, member_id = ?, created = NOW()');
+        $post->execute(array(
             $_POST['title'],
             $_POST['contents'],
-            $_SESSION['id']
+            $member['id']
         ));
-
+        // リロード時、同じ内容が記録されるのを防止するためのリダイレクト
         header('Location: ./index.php');
     }
-
-
 }
 
+// Todoを取得
+$tasks = $db->prepare('SELECT * FROM todo_list WHERE member_id = ? ORDER BY created ASC' );
+$tasks->execute(array($member['id']));
 ?>
 
 <!doctype html>
@@ -40,7 +45,7 @@ if(!empty($_POST)) {
 <!-- Required meta tags -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Title</title>
+<title>入力および表示</title>
 
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" href="./css/post_style.css">
@@ -69,7 +74,7 @@ if(!empty($_POST)) {
                         <input type="text" name="title" placeholder="Todo">
                     </dt>
                     <dt>
-                        <input type="text" name="contents" placeholder="内容">
+                        <textarea name="contents" cols="50" rows="5"></textarea>
                     </dt>
                 </dl>
                 <input type="submit">
@@ -80,8 +85,17 @@ if(!empty($_POST)) {
                 <p><?php echo $member['name'] . 'さんのTodoリスト'?></p>
             </div>
             <ul>
-                <li>task1</li>
-                <li>task2</li>
+                <li>task1<span> 編集 </span><span> 削除 </span></li>
+                <li>task2<span> 編集 </span><span> 削除 </span></li>
+
+                <!-- 取得したtodoの配列から1つずつ取り出す -->
+                <?php
+                foreach($tasks as $task):
+                ?>
+                    <li><a href="./view.php?no=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>"><?php echo htmlspecialchars($task['title'], ENT_QUOTES); ?></a><span> <a href="./edit.php?no=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">編集</a> </span><span> <a href="./delete.php?no=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">削除</a> </span></li>
+                <?php
+                endforeach;
+                ?>
             </ul>
 
         </div>
