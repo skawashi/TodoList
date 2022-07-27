@@ -1,22 +1,10 @@
 <?php
 session_start();
 require('./dbconnect.php');
+require('./function.php');
 
 // XSS対策
 header('Content-Type: text/html; charset = UTF-8');
-function hsc($value) {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-}
-
-// ログイン状態を保存していたらタイムアウト時間を伸ばす
-if($_SESSION['login'] == 'save') {
-    session_regenerate_id(true);
-    $_SESSION['id'] = $member['id'];
-    $_SESSION['time'] = time();
-    $_SESSION['timeout'] = 60 * 60 * 24 * 7;
-    header('Location: ./index.php');
-    exit();
-}
 
 // ToDo 徳丸本(p482)を参考に認証処理を行う
 // 入力内容のチェック
@@ -29,25 +17,31 @@ if(!empty($_POST)) {
 
         // DBから取り出したパスワードと入力されたパスワードの照合
         if(password_verify($_POST['password'], $member['password'])) {
+            // パスワードが一致した場合
+            $autologin = ($_POST['autologin'] === 'on');
+            $timeout = 30 * 60;
+
+            if($autologin) {
+                // 自動ログインする場合
+                $timeout = 7 * 24 * 60 * 60;
+                session_set_cookie_params($timeout);
+                $_SESSION['message'] = '自動ログイン中';
+            }
+
             // セッションIDの再生成
             session_regenerate_id(true);
             $_SESSION['id'] = $member['id'];
-            $_SESSION['time'] = time();
-            $_SESSION['timeout'] = 60 * 30;
-
-            // ログイン情報を保存する場合
-            if($_POST['save'] == 'on') {
-                $_SESSION['login'] = 'save';
-            }
+            $_SESSION['timeout'] = $timeout; // タイムアウト時間
+            $_SESSION['expires'] = time() + $timeout; // タイムアウト時刻
 
             header('Location: ./index.php');
             exit();
 
-        // 該当データがない場合
         } else {
+            // パスワードが一致しなかった場合
             $error['login'] = 'failed';
         }
-    // 入力漏れがある場合
+    // フォームに入力漏れがある場合
     } else {
         $error['login'] = 'blank';
     }
@@ -93,6 +87,7 @@ if(!empty($_POST)) {
                 <p>ログインに失敗しました。正しく入力してください。</p>
             </div>
         <?php endif; ?>
+
         <form action="" method="post">
             <dl>
                 <dt>
@@ -111,7 +106,7 @@ if(!empty($_POST)) {
                     <p>ログイン情報の記録</p>
                 </dt>
                 <dd>
-                    <input type="checkbox" name="save" id="save" value="on"><label for="save">次回からは自動的にログインする</label>
+                    <input type="checkbox" name="autologin" id="autologin" value="on"><label for="autologin">次回からは自動的にログインする</label>
                 </dd>
             </dl>
             <div>
