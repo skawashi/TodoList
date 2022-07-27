@@ -103,4 +103,5 @@ $tasks->execute(array($member['id']));
     <footer class="page-footer footer-wrapper">
         <p><small>&copy; 2022 TODO_LIST</small></p>
     </footer>
+</body>
 </html>
