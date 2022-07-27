@@ -2,6 +2,12 @@
 session_start();
 require('./dbconnect.php');
 
+// XSS対策
+header('Content-Type: text/html; charset = UTF-8');
+function hsc($value) {
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
+
 if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) {
     // 両方満たしている場合
     $_SESSION['time'] = time();
@@ -76,13 +82,13 @@ if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) 
                         <p>todo</p>
                     </dt>
                     <dd>
-                    <input type="text" name="title" value="<?php echo htmlspecialchars($task['title'], ENT_QUOTES); ?>">
+                    <input type="text" name="title" value="<?php echo hsc($task['title']); ?>">
                     </dd>
                     <dt>
                         <p>内容</p>
                     </dt>
                     <dd>
-                        <textarea name="contents" cols="30" rows="10"><?php echo htmlspecialchars($task['contents'], ENT_QUOTES); ?></textarea>
+                        <textarea name="contents" cols="30" rows="10"><?php echo hsc($task['contents']); ?></textarea>
                     </dd>
                 </dl>
                 <input type="hidden" name="id" value="<?php echo $task['id']; ?>">

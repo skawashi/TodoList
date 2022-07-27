@@ -2,6 +2,12 @@
 session_start();
 require('./dbconnect.php');
 
+// XSS対策
+header('Content-Type: text/html; charset = UTF-8');
+function hsc($value) {
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
+
 // idセットされ、タイムアウトしていないかチェック
 if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) {
     // 両方満たしている場合
@@ -89,7 +95,7 @@ $tasks->execute(array($member['id']));
                 <?php
                 foreach($tasks as $task):
                 ?>
-                    <li><a href="./view.php?id=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>"><?php echo htmlspecialchars($task['title'], ENT_QUOTES); ?></a><span> <a href="./edit.php?id=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">編集</a> </span><span> <a href="./delete.php?id=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">削除</a> </span></li>
+                    <li><a href="./view.php?id=<?php echo hsc($task['id']); ?>"><?php echo hsc($task['title']); ?></a><span> <a href="./edit.php?id=<?php echo hsc($task['id']); ?>">編集</a> </span><span> <a href="./delete.php?id=<?php echo hsc($task['id']); ?>">削除</a> </span></li>
                 <?php
                 endforeach;
                 ?>

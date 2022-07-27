@@ -2,6 +2,12 @@
 session_start();
 require('./dbconnect.php');
 
+// XSS対策
+header('Content-Type: text/html; charset = UTF-8');
+function hsc($value) {
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
+
 // ログイン状態を保存していたらタイムアウト時間を伸ばす
 if($_SESSION['login'] == 'save') {
     session_regenerate_id(true);
@@ -93,13 +99,13 @@ if(!empty($_POST)) {
                     <p>メールアドレス</p>
                 </dt>
                 <dd>
-                    <input type="text" name="mail" size="35" maxlength="255" <?php echo htmlspecialchars($_POST['mail'], ENT_QUOTES); ?>>
+                    <input type="text" name="mail" size="35" maxlength="255" <?php echo hsc($_POST['mail']); ?>>
                 </dd>
                 <dt>
                     <p>パスワード</p>
                 </dt>
                 <dd>
-                    <input type="password" name="password" size="35" maxlength="100" <?php echo htmlspecialchars($_POST['password'], ENT_QUOTES); ?>>
+                    <input type="password" name="password" size="35" maxlength="100" <?php echo hsc($_POST['password']); ?>>
                 </dd>
                 <dt>
                     <p>ログイン情報の記録</p>
