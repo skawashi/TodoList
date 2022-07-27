@@ -3,7 +3,7 @@ session_start();
 require('./dbconnect.php');
 
 // idセットされ、タイムアウトしていないかチェック
-if(isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
+if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) {
     // 両方満たしている場合
     $_SESSION['time'] = time();
 
@@ -57,7 +57,7 @@ $tasks->execute(array($member['id']));
             <p>TodoList</p>
             <nav>
                 <ul class="main-nav">
-                    <li><a href="">ログアウト</a></li>
+                    <li><a href="./logout.php">ログアウト</a></li>
                 </ul>
             </nav>
         </div>
@@ -74,7 +74,7 @@ $tasks->execute(array($member['id']));
                         <input type="text" name="title" placeholder="Todo">
                     </dt>
                     <dt>
-                        <textarea name="contents" cols="50" rows="5"></textarea>
+                        <textarea name="contents" cols="50" rows="5" placeholder="Todoの詳細"></textarea>
                     </dt>
                 </dl>
                 <input type="submit">
@@ -85,14 +85,11 @@ $tasks->execute(array($member['id']));
                 <p><?php echo $member['name'] . 'さんのTodoリスト'?></p>
             </div>
             <ul>
-                <li>task1<span> 編集 </span><span> 削除 </span></li>
-                <li>task2<span> 編集 </span><span> 削除 </span></li>
-
                 <!-- 取得したtodoの配列から1つずつ取り出す -->
                 <?php
                 foreach($tasks as $task):
                 ?>
-                    <li><a href="./view.php?no=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>"><?php echo htmlspecialchars($task['title'], ENT_QUOTES); ?></a><span> <a href="./edit.php?no=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">編集</a> </span><span> <a href="./delete.php?no=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">削除</a> </span></li>
+                    <li><a href="./view.php?id=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>"><?php echo htmlspecialchars($task['title'], ENT_QUOTES); ?></a><span> <a href="./edit.php?id=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">編集</a> </span><span> <a href="./delete.php?id=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">削除</a> </span></li>
                 <?php
                 endforeach;
                 ?>
