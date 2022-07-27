@@ -3,14 +3,20 @@ session_start();
 require('./dbconnect.php');
 
 // idがセットされ、タイムアウトしていないかチェック
-if(isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
+if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) {
     // 両方満たしている場合
     $_SESSION['time'] = time();
+
+    if(empty($_GET['id'])) {
+        // クエリストリングにidが指定されていない場合
+        header('Location: ./index.php');
+        exit();
+    }
 
     // DBからTodoの詳細を取得する
     $tasks = $db->prepare('SELECT * FROM todo_list WHERE id =? AND member_id = ?');
     $tasks->execute(array(
-        $_GET['no'],
+        $_GET['id'],
         $_SESSION['id']
     ));
 
@@ -18,7 +24,7 @@ if(isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
 
 } else {
     // 満たしていない場合
-    header('Location: ./login.php');
+    header('Location: ./index.php');
     exit();
 }
 ?>
@@ -42,7 +48,7 @@ if(isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
             <p>TodoList</p>
             <nav>
                 <ul class="main-nav">
-                    <li><a href="./join/index.php">会員登録</a></li>
+                    <li><a href="./logout.php">ログアウト</a></li>
                 </ul>
             </nav>
         </div>
@@ -59,7 +65,7 @@ if(isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
         <?php else: ?>
             <p>このTodoは削除されたか、URLが間違えています。</p>
         <?php endif; ?>
-        <p><a href="./index.php">&laquo;&nbsp;戻る</a> | <a href="./edit.php?no=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">編集する</a> | <a href="./delete.php?no=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">削除する</a></p>
+        <p><a href="./index.php">&laquo;&nbsp;戻る</a> | <a href="./edit.php?id=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">編集する</a> | <a href="./delete.php?id=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">削除する</a></p>
     </main>
 
     <footer class="page-footer footer-wrapper">
