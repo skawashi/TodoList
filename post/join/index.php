@@ -18,7 +18,7 @@ if(!empty($_POST)) {
     // メールアドレスが未入力の場合
     if($_POST['mail'] == '') {
         $error['mail'] = 'blank';
-    } elseif (!filter_input(INPUT_POST, 'mail', FILTER_VALIDATE_EMAIL)){
+    } elseif (!filter_input(INPUT_POST, 'mail', FILTER_VALIDATE_EMAIL)) {
         $error['mail'] = 'false';
     }
 
@@ -100,11 +100,11 @@ if($_GET['action'] == 'rewrite') {
                     <?php if($error['mail'] == 'blank'): ?>
                         <p class="error">* メールアドレスを入力してください</p>
                     <?php endif; ?>
-                    <?php if($error['mail'] == 'duplicate'): ?>
-                        <p>* このメールアドレスは既に登録されています</p>
-                    <?php endif; ?>
                     <?php if($error['mail'] == 'false'): ?>
                         <p>* メールアドレスを正しく入力してください</p>
+                    <?php endif; ?>
+                    <?php if($error['mail'] == 'duplicate'): ?>
+                        <p>* このメールアドレスは既に登録されています</p>
                     <?php endif; ?>
                 </dd>
                 <dt>パスワード</dt>
