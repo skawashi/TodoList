@@ -2,6 +2,12 @@
 session_start();
 require('./dbconnect.php');
 
+// XSS対策
+header('Content-Type: text/html; charset = UTF-8');
+function hsc($value) {
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
+
 // idがセットされ、タイムアウトしていないかチェック
 if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) {
     // 両方満たしている場合
@@ -57,15 +63,15 @@ if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) 
     <main>
         <?php if($task = $tasks->fetch()): ?>
             <h1><?php echo $task['title']; ?></h1>
-            <h3><?php echo htmlspecialchars($task['contents'], ENT_QUOTES); ?></h3>
-            <p>作成日 : <?php echo htmlspecialchars($task['created'], ENT_QUOTES); ?></p>
+            <h3><?php echo hsc($task['contents']); ?></h3>
+            <p>作成日 : <?php echo hsc($task['created']); ?></p>
             <?php if($task['created'] != $task['modified']): ?>
-                <p>修正日 : <?php echo htmlspecialchars($task['modified'], ENT_QUOTES); ?></p>
+                <p>修正日 : <?php echo hsc($task['modified']); ?></p>
             <?php endif; ?>
         <?php else: ?>
             <p>このTodoは削除されたか、URLが間違えています。</p>
         <?php endif; ?>
-        <p><a href="./index.php">&laquo;&nbsp;戻る</a> | <a href="./edit.php?id=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">編集する</a> | <a href="./delete.php?id=<?php echo htmlspecialchars($task['id'], ENT_QUOTES); ?>">削除する</a></p>
+        <p><a href="./index.php">&laquo;&nbsp;戻る</a> | <a href="./edit.php?id=<?php echo hsc($task['id']); ?>">編集する</a> | <a href="./delete.php?id=<?php echo hsc($task['id']); ?>">削除する</a></p>
     </main>
 
     <footer class="page-footer footer-wrapper">

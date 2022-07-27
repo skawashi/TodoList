@@ -2,6 +2,12 @@
 session_start();
 require('../dbconnect.php');
 
+// XSS対策
+header('Content-Type: text/html; charset = UTF-8');
+function hsc($value) {
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
+
 if(!isset($_SESSION['join'])) {
     header('Location: ./index.php');
     exit();
@@ -59,9 +65,9 @@ if(!empty($_POST)) {
             </div>
             <dl>
                 <dt>ユーザーネーム</dt>
-                <dd><?php echo htmlspecialchars($_SESSION['join']['name'], ENT_QUOTES); ?></dd>
+                <dd><?php echo hsc($_SESSION['join']['name']); ?></dd>
                 <dt>メールアドレス</dt>
-                <dd><?php echo htmlspecialchars($_SESSION['join']['mail'], ENT_QUOTES); ?></dd>
+                <dd><?php echo hsc($_SESSION['join']['mail']); ?></dd>
                 <dt>パスワード</dt>
                 <dd>【表示されません】</dd>
             </dl>

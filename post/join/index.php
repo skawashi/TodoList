@@ -2,6 +2,12 @@
 session_start();
 require('../dbconnect.php');
 
+// XSS対策
+header('Content-Type: text/html; charset = UTF-8');
+function hsc($value) {
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
+
 // フォームのエラーチェック
 if(!empty($_POST)) {
     // 名前が未入力
@@ -12,6 +18,8 @@ if(!empty($_POST)) {
     // メールアドレスが未入力の場合
     if($_POST['mail'] == '') {
         $error['mail'] = 'blank';
+    } elseif (!filter_input(INPUT_POST, 'mail', FILTER_VALIDATE_EMAIL)){
+        $error['mail'] = 'false';
     }
 
     // パスワードが未入力の場合
@@ -47,11 +55,6 @@ if($_GET['action'] == 'rewrite') {
 }
 ?>
 
-<?php
-    function hsc($value) {
-        return htmlspecialchars($value, ENT_QUOTES);
-    }
-?>
 <!doctype html>
 <html lang="ja">
 
@@ -99,6 +102,9 @@ if($_GET['action'] == 'rewrite') {
                     <?php endif; ?>
                     <?php if($error['mail'] == 'duplicate'): ?>
                         <p>* このメールアドレスは既に登録されています</p>
+                    <?php endif; ?>
+                    <?php if($error['mail'] == 'false'): ?>
+                        <p>* メールアドレスを正しく入力してください</p>
                     <?php endif; ?>
                 </dd>
                 <dt>パスワード</dt>
