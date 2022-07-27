@@ -2,9 +2,12 @@
 session_start();
 require('./dbconnect.php');
 
-// ログイン状態を保存していたら自動ログイン
+// ログイン状態を保存していたらタイムアウト時間を伸ばす
 if($_SESSION['login'] == 'save') {
+    session_regenerate_id(true);
+    $_SESSION['id'] = $member['id'];
     $_SESSION['time'] = time();
+    $_SESSION['timeout'] = 60 * 60 * 24 * 7;
     header('Location: ./index.php');
     exit();
 }
@@ -24,6 +27,7 @@ if(!empty($_POST)) {
             session_regenerate_id(true);
             $_SESSION['id'] = $member['id'];
             $_SESSION['time'] = time();
+            $_SESSION['timeout'] = 60 * 30;
 
             // ログイン情報を保存する場合
             if($_POST['save'] == 'on') {
@@ -42,7 +46,6 @@ if(!empty($_POST)) {
         $error['login'] = 'blank';
     }
 }
-
 ?>
 
 <!doctype html>
@@ -71,7 +74,6 @@ if(!empty($_POST)) {
     </header>
 
     <main class="login-form">
-
         <div>
             <h2>ログイン</h2>
         </div>
