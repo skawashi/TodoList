@@ -1,10 +1,14 @@
 <?php
 session_start();
 require('./dbconnect.php');
+require('./function.php');
 
-if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) {
-    // 両方満たしている場合
-    $_SESSION['time'] = time();
+// XSS対策
+header('Content-Type: text/html; charset = UTF-8');
+
+
+if(islogin()) {
+    // ログイン中の場合の処理
 
     if(empty($_GET['id'])) {
         // クエリストリングにidが指定されていない場合

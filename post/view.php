@@ -1,17 +1,14 @@
 <?php
 session_start();
 require('./dbconnect.php');
+require('./function.php');
 
 // XSS対策
 header('Content-Type: text/html; charset = UTF-8');
-function hsc($value) {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-}
 
 // idがセットされ、タイムアウトしていないかチェック
-if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) {
-    // 両方満たしている場合
-    $_SESSION['time'] = time();
+if(islogin()) {
+    // ログイン中の場合の処理
 
     if(empty($_GET['id'])) {
         // クエリストリングにidが指定されていない場合
@@ -62,8 +59,10 @@ if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) 
 
     <main>
         <?php if($task = $tasks->fetch()): ?>
-            <h1><?php echo $task['title']; ?></h1>
-            <h3><?php echo hsc($task['contents']); ?></h3>
+            <h1><?php echo hsc($task['title']); ?></h1>
+            <pre>
+                <h2><?php echo hsc($task['contents']); ?></h2>
+            </pre>
             <p>作成日 : <?php echo hsc($task['created']); ?></p>
             <?php if($task['created'] != $task['modified']): ?>
                 <p>修正日 : <?php echo hsc($task['modified']); ?></p>

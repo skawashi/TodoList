@@ -1,16 +1,13 @@
 <?php
 session_start();
 require('./dbconnect.php');
+require('./function.php');
 
 // XSS対策
 header('Content-Type: text/html; charset = UTF-8');
-function hsc($value) {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-}
 
-if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) {
-    // 両方満たしている場合
-    $_SESSION['time'] = time();
+if(islogin()) {
+    // ログイン中の場合の処理
 
     if(empty($_GET['id'])) {
         // クエリストリングにidが指定されていない場合
@@ -26,7 +23,7 @@ if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) 
             $_SESSION['id']
         ));
         $task = $tasks->fetch();
-        // $message = 'ifの中にははいっているよ';
+
     } else {
         // 編集を行なった時
         $tasks = $db->prepare('UPDATE todo_list SET title = ?, contents = ?, modified = NOW() WHERE id = ?');

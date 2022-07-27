@@ -1,17 +1,13 @@
 <?php
 session_start();
 require('./dbconnect.php');
+require('./function.php');
 
 // XSS対策
 header('Content-Type: text/html; charset = UTF-8');
-function hsc($value) {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-}
 
 // idセットされ、タイムアウトしていないかチェック
-if(isset($_SESSION['id']) && $_SESSION['time'] + $_SESSION['timeout'] > time()) {
-    // 両方満たしている場合
-    $_SESSION['time'] = time();
+if(islogin()) {
 
     // 会員情報の取得
     $members = $db->prepare('SELECT * FROM members Where id = ?');
@@ -88,7 +84,7 @@ $tasks->execute(array($member['id']));
         </div>
         <div class="todo-table">
             <div class="title">
-                <p><?php echo $member['name'] . 'さんのTodoリスト'?></p>
+                <p><?php echo hsc($member['name']) . 'さんのTodoリスト'?></p>
             </div>
             <ul>
                 <!-- 取得したtodoの配列から1つずつ取り出す -->
