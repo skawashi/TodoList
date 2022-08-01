@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+.todo-view {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+p {
+    background-color: red;
+}
