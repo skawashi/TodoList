@@ -55,7 +55,9 @@ if(islogin()) {
 <title>edit</title>
 
 <!-- Bootstrap CSS -->
-<link rel="stylesheet" href="./css/post_style.css">
+<link rel="stylesheet" href="./css/global.css">
+<link rel="stylesheet" href="./css/header_footer.css">
+<link rel="stylesheet" href="./css/post_edit.css">
 </head>
 
 <body>
@@ -70,29 +72,31 @@ if(islogin()) {
         </div>
     </header>
 
-    <main>
-        <div>
-            <h1><?php echo $message; ?></h1>
+    <main class="todo-edit">
+        <div class="edit-form">
             <form action="" method="post">
                 <dl>
                     <dt>
-                        <p>todo</p>
+                        <p class="title-label">Todo</p>
                     </dt>
                     <dd>
-                    <input type="text" name="title" value="<?php echo hsc($task['title']); ?>">
+                    <input type="text" name="title" class="title" value="<?php echo hsc($task['title']); ?>">
                     </dd>
                     <dt>
-                        <p>内容</p>
+                        <p class="contents-label">内容</p>
                     </dt>
                     <dd>
-                        <textarea name="contents" cols="30" rows="10"><?php echo hsc($task['contents']); ?></textarea>
+                        <textarea name="contents" class="contents" cols="30" rows="10"><?php echo hsc($task['contents']); ?></textarea>
                     </dd>
                 </dl>
                 <input type="hidden" name="id" value="<?php echo $task['id']; ?>">
-                <input type="submit" value="変更する">
+                <div class="option">
+                    <p><a class="return" href="./index.php">&laquo;&nbsp;戻る</a>
+                    <input type="submit" class="button" value="変更する">
+                </div>
             </form>
         </div>
-        <p><a href="./index.php">&laquo;&nbsp;戻る</a>
+
     </main>
 
     <footer class="page-footer footer-wrapper">
