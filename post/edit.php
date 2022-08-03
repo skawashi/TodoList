@@ -22,7 +22,7 @@ if(islogin()) {
             $_GET['id'],
             $_SESSION['id']
         ));
-        $task = $tasks->fetch();
+        // $task = $tasks->fetch();
 
     } else {
         // 編集を行なった時
@@ -74,27 +74,32 @@ if(islogin()) {
 
     <main class="todo-edit">
         <div class="edit-form">
-            <form action="" method="post">
-                <dl>
-                    <dt>
-                        <p class="title-label">Todo</p>
-                    </dt>
-                    <dd>
-                    <input type="text" name="title" class="title" value="<?php echo hsc($task['title']); ?>">
-                    </dd>
-                    <dt>
-                        <p class="contents-label">内容</p>
-                    </dt>
-                    <dd>
-                        <textarea name="contents" class="contents" cols="30" rows="10"><?php echo hsc($task['contents']); ?></textarea>
-                    </dd>
-                </dl>
-                <input type="hidden" name="id" value="<?php echo $task['id']; ?>">
-                <div class="option">
-                    <p><a class="return" href="./index.php">&laquo;&nbsp;戻る</a>
-                    <input type="submit" class="button" value="変更する">
-                </div>
-            </form>
+            <?php if($task = $tasks->fetch()): ?>
+                <form action="" method="post">
+                    <dl>
+                        <dt>
+                            <p class="title-label">Todo</p>
+                        </dt>
+                        <dd>
+                        <input type="text" name="title" class="title" value="<?php echo hsc($task['title']); ?>">
+                        </dd>
+                        <dt>
+                            <p class="contents-label">内容</p>
+                        </dt>
+                        <dd>
+                            <textarea name="contents" class="contents" cols="30" rows="10"><?php echo hsc($task['contents']); ?></textarea>
+                        </dd>
+                    </dl>
+                    <input type="hidden" name="id" value="<?php echo $task['id']; ?>">
+                    <div class="option">
+                        <p><a class="return" href="./index.php">&laquo;&nbsp;戻る</a>
+                        <input type="submit" class="button" value="変更する">
+                    </div>
+                </form>
+            <?php else: ?>
+                <p class="deleted">このTodoは削除されたか、URLが間違えています。</p>
+                <p><a href="./index.php">&laquo;&nbsp;戻る</a>
+            <?php endif; ?>
         </div>
 
     </main>
